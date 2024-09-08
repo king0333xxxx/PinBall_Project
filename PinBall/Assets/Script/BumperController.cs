@@ -4,50 +4,70 @@ using UnityEngine;
 
 public class BumperController : MonoBehaviour
 {
-    //reference collider ball
+    // Reference collider untuk bola
     public Collider ball;
 
-    //multiplier
+    // Multiplier untuk kecepatan bola
     public float multiplier;
 
-    // untuk mengatur warna bumper
-    public Color color;
-    // komponen renderer pada object yang akan diubah
+    // Warna yang ingin diterapkan pada bumper
+    public Color baseColor;
+    public Color hitColor;
+
+
+    // Komponen renderer pada object
     private Renderer renderer;
     private Animator animator;
 
-    // Start is called before the first frame update
+    public bool animClear = false ;
+
+    // Fungsi yang dipanggil pertama kali saat objek aktif
     void Start()
     {
-        
+        animClear = false ;
 
-        // karena material ada pada component Rendered, maka kita ambil renderernya
+        // Ambil komponen Renderer dari object
         renderer = GetComponent<Renderer>();
         animator = GetComponent<Animator>();
 
-        // kita akses materialnya dan kita ubah warna nya saat Start
-        renderer.material.color = color;
-
+        // Pastikan material dan renderer ada, lalu ubah warnanya
+        if (renderer != null && renderer.material != null)
+        {
+            Debug.Log("Mengubah warna bumper pada Start.");
+            renderer.material.color = baseColor;
+        }
+        else
+        {
+            Debug.LogWarning("Renderer atau material tidak ditemukan.");
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (animClear)
+        {
+            renderer.material.color = baseColor;
+            animClear = false;
+        }
     }
 
+    // Fungsi yang dipanggil setiap kali terjadi tabrakan
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.collider == ball)
+        if (collision.collider == ball)
         {
             Debug.Log("Hit");
+            renderer.material.color = hitColor;
 
-            //get rigidbody then multiplier the ball speed
+            // Ubah kecepatan bola saat menabrak bumper
             Rigidbody bolaRig = ball.GetComponent<Rigidbody>();
             bolaRig.velocity *= multiplier;
 
-            // saat ditabrak oleh bola, kita tinggal aktifkan trigger Hit
+            // Trigger animasi saat tabrakan terjadi
             animator.SetTrigger("Hit");
+            animClear = true;
+            
+
         }
     }
 }
