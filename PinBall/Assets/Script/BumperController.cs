@@ -4,22 +4,32 @@ using UnityEngine;
 
 public class BumperController : MonoBehaviour
 {
+    [Header("Reference Score")]
+    // untuk mengakses score manager
+    public ScoreManager scoreManager;
+    public float score;
+
+    [Header("Reference Object")]
     // Reference collider untuk bola
     public Collider ball;
-
     // Multiplier untuk kecepatan bola
     public float multiplier;
 
+    [Header("Reference Materials")]
     // Warna yang ingin diterapkan pada bumper
     public Color baseColor;
     public Color hitColor;
-
-
     // Komponen renderer pada object
     private Renderer renderer;
     private Animator animator;
 
-    public bool animClear = false ;
+    [Header("Reference Sfx/VFx")]
+    // tambahkan audio manager untuk mengakses fungsi pada audio managernya
+    public AudioManager audioManager;
+    // tambahkan vfx manager untuk mengakses fungsi pada audio managernya
+    public VFXManager vFxManager;
+
+    private bool animClear = false ;
 
     // Fungsi yang dipanggil pertama kali saat objek aktif
     void Start()
@@ -66,7 +76,15 @@ public class BumperController : MonoBehaviour
             // Trigger animasi saat tabrakan terjadi
             animator.SetTrigger("Hit");
             animClear = true;
-            
+
+            // kita jalankan SFX saat tabrakan dengan bola pada posisi tabrakannya
+            audioManager.PlayBumperSFX(collision.transform.position);
+
+            // kita jalankan VFX saat tabrakan dengan bola pada posisi tabrakannya
+            vFxManager.PlayBumperVFX(collision.transform.position);
+
+            //tambah score saat menabrak bumper
+            scoreManager.AddScore(score);
 
         }
     }

@@ -11,10 +11,12 @@ public class SwitchController : MonoBehaviour
         Blink
     }
 
+    [Header("Reference Materials")]
     // menyimpan variabel material nyala dan mati untuk merubah warna
     public Material offMaterial;
     public Material onMaterial;
 
+    [Header("Reference Object")]
     // menyimpan variabel bola sebagai referensi untuk pengecekan
     public Collider bola;
 
@@ -22,6 +24,17 @@ public class SwitchController : MonoBehaviour
     private SwitchState state;
     // komponen renderer pada object yang akan diubah
     private Renderer renderer;
+
+    [Header("Reference Score")]
+    //add Scrore
+    public ScoreManager scoreManager;
+    public float score;
+
+    [Header("Reference Sfx/VFx")]
+    // tambahkan audio manager untuk mengakses fungsi pada audio managernya
+    public AudioManager audioManager;
+    // tambahkan vfx manager untuk mengakses fungsi pada audio managernya
+    public VFXManager vFxManager;
 
     // Start is called before the first frame update
     void Start()
@@ -45,11 +58,15 @@ public class SwitchController : MonoBehaviour
         if (other == bola)
         {
             // kita lakukan debug
-            //Debug.Log("Kena Bola");
-            if (other == bola)
-            {
-                Toggle();
-            }
+            Debug.Log("Kena Bola");
+            Toggle();
+
+            // kita jalankan SFX saat tabrakan dengan bola pada posisi tabrakannya
+            audioManager.PlaySwitchSFX(other.transform.position);
+
+            // kita jalankan VFX saat tabrakan dengan bola pada posisi tabrakannya
+            vFxManager.PlaySwitchVFX(other.transform.position);
+
         }
     }
 
@@ -90,6 +107,9 @@ public class SwitchController : MonoBehaviour
 
     private void Toggle()
     {
+        //tambah score saat menyalakan atau mematikan switch
+        scoreManager.AddScore(score);
+
         if (state == SwitchState.On)
         {
             Set(false);
